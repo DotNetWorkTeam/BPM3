@@ -123,21 +123,9 @@ namespace BPM1.Controllers
                 sb1.Append(sb01);
             }
 
-            //ViewBag.UserId = mu.ID.ToString();
-            //ViewBag.AreaCode = mu.U_AreaCode;
-            //ViewBag.UserJson = JsonConvert.SerializeObject(mu);
+  
             ViewBag.menulist = sb1.ToString();
-            //Power_UserView _UserView = _UserBLL.GetViewModel(ManageProvider.Current.ID.ToString());
-            //if (_UserView.A0191A != null)
-            //{
-            //    Sys_AttachmentView _AttachmentView = _AttachmentBLL.GetViewModel(_UserView.A0191A.ToString());
-            //    ViewData["A019A"] = _AttachmentView.ID;
-            //    ViewData["ImageFile"] = _AttachmentView.ImageFile;
-            //}
-            //else
-            //{
-            //    ViewData["ImageFile"] = "/page/img/user.png";
-            //}
+
             return View();
         }
     }
