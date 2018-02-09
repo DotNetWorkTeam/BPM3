@@ -214,14 +214,7 @@
 
     //页面加载时执行
     $(function () {
-        var Parameter = [];
-        Parameter.push({
-            paramName: 'U_AreaCode',
-            paramValue: '@Hasng.CadreFile.Utilities.ManageProvider.Current.U_AreaCode',
-            Operation: 'Equal',
-            Logic: "AND"
-        });
-        Stationsobj.grid.load({ ParameterJson: JSON.stringify(Parameter) });
+        Stationsobj.grid.load();
     })
 
 </script>

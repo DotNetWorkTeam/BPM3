@@ -55,5 +55,23 @@ namespace BPM.Repository
             _dbContext.Set<T>().Remove(entity);
             _dbContext.SaveChanges();
         }
+
+        public IEnumerable<T> GetPageList( int pageSize, int pageIndex,out int records)
+        {
+            var q = _dbContext.Set<T>();
+            records = q.Count();
+
+            return q.Skip(pageSize * (pageIndex - 1))
+                            .Take(pageSize).AsEnumerable();
+        }
+
+        public IEnumerable<T> GetPageList(System.Linq.Expressions.Expression<Func<T, bool>> predicate,int pageSize,int pageIndex,out int records)
+        {
+            var q = _dbContext.Set<T>().Where(predicate);
+            records = q.Count();
+
+            return q.Skip(pageSize * (pageIndex - 1))
+                            .Take(pageSize).AsEnumerable();
+        }
     }
 }
