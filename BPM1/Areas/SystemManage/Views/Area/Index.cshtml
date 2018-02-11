@@ -26,6 +26,8 @@
             <a class="mini-button green" plain="true" onclick="AreaObj.btnExport()">导出</a>
             <a class="mini-button Blue" plain="true" onclick="AreaObj.btnImport()">导入</a>
             <a class="mini-button Light" plain="true" onclick="AreaObj.btnAreaInit()">区域初始化</a>
+            <a class="mini-button Light" plain="true" onclick="AreaObj.btnAdd()">新增</a>
+            <a class="mini-button Light" plain="true" onclick="AreaObj.btnEdit()">编辑</a>
             @*<a class="mini-button" plain="true" onclick="AreaObj.btnShowReport()">演示报表</a>*@
         </div>
 
@@ -220,6 +222,43 @@
                 hasng.Alert();
             }
         },
+        //添加
+        btnAdd: function () { 
+            hasng.WinOpen({
+                url: "/SystemManage/Area/AddView",
+                title: "新增", width: 670, height: 250,
+                onload: function (iframe) {
+
+                    var data = { action: "new" };
+                    iframe.contentWindow.AreaObj.setData(data);
+                },
+                ondestroy: function (action) {
+                    AreaObj.grid.reload();
+                }
+            });
+
+        },
+        ///编辑
+        btnEdit: function () {
+            var row = AreaObj.grid.getSelected();
+            if (!!row) { 
+                
+                hasng.WinOpen({
+                    url: "/SystemManage/Area/AddView",
+                    title: "编辑", width: 670, height: 250,
+                    onload: function (iframe) {
+                        var data = { action: "edit", id: row.ID };
+                        iframe.contentWindow.AreaObj.setData(data);
+                    },
+                    ondestroy: function (action) {
+                        AreaObj.grid.reload();
+                    }
+                });
+            }
+           
+
+            },
+
         btnShowReport: function () {
 
             hasng.WinOpen({

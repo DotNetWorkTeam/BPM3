@@ -26,4 +26,5 @@
     <Folder Include="wwwroot\miniui\miniui\themes\metro\images\button\" />
     <Folder Include="wwwroot\miniui\miniui\themes\pure\images\button\" />
   </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

@@ -41,7 +41,7 @@ namespace BPM1.Areas.SystemManage.Controllers
         {
             //string f = JsonConvert.SerializeObject(jqsortparam);
             var list = _db.Power_Area.ToList();
-            return  JsonConvert.SerializeObject(list);
+            return JsonConvert.SerializeObject(list);
         }
 
 
@@ -58,7 +58,7 @@ namespace BPM1.Areas.SystemManage.Controllers
             //var areaList = list.Where(p => p.IsEnable != false).OrderBy(d => d.U_SortNo).ToList();
             //return areaList.ToJson();
 
-            IEnumerable<Power_Area> areaList  = _areaReponsitory.List(x => x.IsEnable ==true);
+            IEnumerable<Power_Area> areaList = _areaReponsitory.List(x => x.IsEnable == true);
             return JsonConvert.SerializeObject(areaList);
             //return areaJson;
         }
@@ -68,11 +68,11 @@ namespace BPM1.Areas.SystemManage.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        //public string GetModel(string id)
-        //{
-        //    Power_AreaView entity = _areabll.GetViewModel(id);
-        //    return entity.ToJson();
-        //}
+        public string GetModel(string id)
+        {
+            Power_Area entity  = _areaReponsitory.GetById(Guid.Parse(id));
+            return JsonConvert.SerializeObject(entity);
+        }
 
         ///// <summary>
         ///// 带分页数据列表
@@ -180,30 +180,131 @@ namespace BPM1.Areas.SystemManage.Controllers
         //    _areabll.CloseSanYuan(areaCode);
         //}
 
-        ///// <summary>
-        ///// 删除
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //public bool Del(string id)
-        //{
-        //    Power_AreaView power_AreaView = new Power_AreaView();
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(id))
-        //        {
-        //            power_AreaView = _areabll.GetViewModel(id);
-        //            _areabll.Delete(Guid.Parse(id));
-        //            return true;
-        //        }
-        //        logCache.AddServiceLogForDelete(power_AreaView, CurrentMenuID, "管档单位维护删除", "Power_Area");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logCache.AddServiceLogForDelete(power_AreaView, CurrentMenuID, "管档单位维护删除", "Power_Area", HttpContext.Request.Path, ex.Message, ex.StackTrace);
-        //    }
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool Del(Guid id)
+        {
+            Power_Area power_AreaView = new Power_Area();
+            try
+            {
+                if (id != null)
+                {
 
-        //    return false;
-        //}
+                    power_AreaView = _areaReponsitory.GetById(id);
+                    _areaReponsitory.Delete(power_AreaView);
+                    return true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+
+
+            //try
+            //{
+            //    if (!string.IsNullOrEmpty(id))
+            //    {
+            //        power_AreaView = _areaReponsitory.GetById(id);
+            //        _areaReponsitory.Delete(Guid.Parse(id));
+            //        return true;
+            //    }
+            //    logCache.AddServiceLogForDelete(power_AreaView, CurrentMenuID, "管档单位维护删除", "Power_Area");
+            //}
+            //catch (Exception ex)
+            //{
+            //    logCache.AddServiceLogForDelete(power_AreaView, CurrentMenuID, "管档单位维护删除", "Power_Area", HttpContext.Request.Path, ex.Message, ex.StackTrace);
+            //}
+
+            //return false;
+        }
+
+
+        /// <summary>
+        /// 验证输入的值是否唯一
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <param name="filed">字段名</param>
+        /// <param name="val">字段值</param>
+        /// <returns></returns>
+        public bool FindOnly(string code)
+        {
+            int num = _db.Power_Area.Where(x => x.Code == code).Count();
+            if (num > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 编辑时验证
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public bool FindOnlyEdit(string Code, string ID)
+        {
+            #region 条件组合
+            //List<ParameterJson> list = new List<ParameterJson>();
+
+            //list.Add(new ParameterJson("Code", ConditionOperate.Equal.ToString(), Code));
+            //list.Add(new ParameterJson("ID", ConditionOperate.NotEqual.ToString(), ID));
+            //list.Add(new ParameterJson("U_IsValid", ConditionOperate.Equal.ToString(), "1"));
+            //string sCondition = JsonConvert.SerializeObject(list);
+            #endregion
+            int num = _db.Power_Area.Where(x => x.Code == Code && x.ID != Guid.Parse(ID)).Count();
+            return num == 0;
+        }
+
+
+
+
+        public IActionResult AddView()
+        {
+            return View();
+        }
+
+
+
+        /// <summary>
+        /// 新增或编辑数据
+        /// </summary>
+        /// <param name="model"></param>
+        public void InsertOrUpdate(Power_Area model)
+        {
+            Guid Id = model.ID;
+            if (Id == Guid.Empty)
+            {
+                model.IsEnable = true;
+                model.IsOpenTrilateral = false;
+                model.U_CreateDate = DateTime.Now;
+                model.ID = Guid.NewGuid();
+                model.U_IsValid = true;
+                model.IsEnable = true;
+                _areaReponsitory.Add(model);
+
+            }
+            else//
+            {
+                Power_Area model1 = _areaReponsitory.GetById(model.ID);
+                model1.Code = model.Code;
+                model1.IsEnable = model.IsEnable;
+                model1.Level = model.Level;
+                model1.ParentID = model.ParentID;
+                model1.Title = model.Title;
+                model1.U_IsSystem = model.U_IsSystem;
+                model1.U_IsValid = model.U_IsValid;
+                _areaReponsitory.Edit(model1);
+                
+            }
+
+        }
     }
+
+
 }
