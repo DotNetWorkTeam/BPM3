@@ -302,6 +302,11 @@ namespace BPM1
                     return AreaCode.Replace("\"", "");
                 return null;
             }
+            set
+            {
+                byte[] aa = System.Text.Encoding.Default.GetBytes(value);
+                HttpContext.Current.Session.Set("CurrentAreaCode", aa);
+            }
         }
 
         /// <summary>

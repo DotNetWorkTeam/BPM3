@@ -128,6 +128,7 @@ namespace BPM1.Controllers
             //HttpContext.Current.Session.Set("CurrentAreaCode", ByteConvertHelper.Object2Bytes(mu.U_AreaCode));
 
             ManageProvider.UserId = mu.ID.ToString();
+            ManageProvider.AreaCode = mu.U_AreaCode;
             ManageProvider.Current = mu;
 
 

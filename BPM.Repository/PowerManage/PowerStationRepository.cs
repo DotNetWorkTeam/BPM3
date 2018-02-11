@@ -12,5 +12,6 @@ namespace BPM.Repository.PowerManage
         {
             _db = db;
         }
+
     }
 }
