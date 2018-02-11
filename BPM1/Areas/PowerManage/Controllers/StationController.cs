@@ -52,12 +52,14 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
             if (string.IsNullOrEmpty(jqgridparam.sortField))
                 jqgridparam.sortField = "U_SortNo";
 
-            jqgridparam.pageIndex = 1;
-            jqgridparam.pageSize = 20;
-            jqgridparam.records = 1;
+            //jqgridparam.pageIndex = 1;
+            //jqgridparam.pageSize = 20;
+            //jqgridparam.records = 1;
             int records = 0;
 
-            IEnumerable<Power_Stations> list = _stationRepository.GetPageList(x => x.U_AreaCode == "", jqgridparam.pageIndex, jqgridparam.pageSize, out records);
+            string areaCode = ManageProvider.AreaCode;
+
+            IEnumerable<Power_Stations> list = _stationRepository.GetPageList(x => x.U_AreaCode == areaCode,  jqgridparam.pageSize, jqgridparam.pageIndex, out records);
             jqgridparam.records = records;
             //string strJson = _stationbll.FindListJsonPage(ParameterJson, ref jqgridparam);
             return JsonManager.ToPageJson(jqgridparam, JsonConvert.SerializeObject(list));
@@ -109,6 +111,8 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
                 data = model;
                 data.U_CreateDate = DateTime.Now;
                 data.ID = Guid.NewGuid();
+                data.U_IsValid = true;
+                data.U_AreaCode = ManageProvider.AreaCode;
 
                 try
                 {

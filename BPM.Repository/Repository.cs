@@ -38,7 +38,7 @@ namespace BPM.Repository
                    .AsEnumerable();
         }
 
-        public void Add(T entity)
+        public virtual void Add(T entity)
         {
             _dbContext.Set<T>().Add(entity);
             _dbContext.SaveChanges();
@@ -70,7 +70,7 @@ namespace BPM.Repository
             var q = _dbContext.Set<T>().Where(predicate);
             records = q.Count();
 
-            return q.Skip(pageSize * (pageIndex - 1))
+            return q.Skip(pageSize * (pageIndex))
                             .Take(pageSize).AsEnumerable();
         }
     }
