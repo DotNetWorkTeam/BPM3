@@ -47,6 +47,7 @@ namespace BPM.Repository
         public void Edit(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Entry(entity).Property(x => x.U_SortNo).IsModified = false;
             _dbContext.SaveChanges();
         }
 
