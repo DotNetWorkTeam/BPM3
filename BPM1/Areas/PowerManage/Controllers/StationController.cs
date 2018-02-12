@@ -78,25 +78,29 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
             //return entity.ToJson();
         }
 
-        ///// <summary>
-        ///// 获取岗位的json
-        ///// </summary>
-        ///// <returns></returns>
-        //public string GetStationJson()
-        //{
+        /// <summary>
+        /// 获取岗位的json
+        /// </summary>
+        /// <returns></returns>
+        public string GetStationJson()
+        {
 
-        //    #region 条件组合
-        //    string sCondition = JqConditionParam.ToJson();
-        //    #endregion
+            //#region 条件组合
+            //string sCondition = JqConditionParam.ToJson();
+            //#endregion
 
-        //    #region 排序
-        //    string strSort = new JqSortParam().ToJson();
+            //#region 排序
+            //string strSort = new JqSortParam().ToJson();
 
-        //    #endregion
+            //#endregion
 
-        //    string strJson = _stationbll.GetListJson(sCondition, strSort);
-        //    return strJson;
-        //}
+            //string strJson = _stationbll.GetListJson(sCondition, strSort);
+            //return strJson;
+
+
+            IEnumerable<Power_Stations> list = _stationRepository.List();
+            return JsonConvert.SerializeObject(list);
+        }
 
         /// <summary>
         /// 编辑或新增

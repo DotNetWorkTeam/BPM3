@@ -10,6 +10,7 @@ using BPM.Repository;
 using BPM.Models;
 using Microsoft.EntityFrameworkCore;
 using BPM.Repository.PowerManage;
+using BPM1;
 
 namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
 {
@@ -125,12 +126,15 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
                 {
                     userModel = data;
                     //userModel.U_AreaCode = ManageProvider.Current.U_AreaCode;
-                    userModel.PassWord = "123456"; //MD5Helper.MD5Encrypt64("123456"); //对密码进行MD5加密
+                    userModel.PassWord = MD5Helper.MD5Encrypt64("123456"); //对密码进行MD5加密
                     userModel.Isinitial = true;
                     //userModel.U_IsSystem = false;
                     //userModel.U_IsValid = true;
                     userModel.IsSuperUser = false;
                     userModel.IsTrilateral = false;
+                    userModel.U_AreaCode = ManageProvider.AreaCode;
+                    userModel.U_IsValid = true;
+                    
                     //userModel.U_LastModifiedDate = DateTime.Now;
      
 
@@ -162,8 +166,7 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
                     userModel.Status = data.Status;
 
                     //修改用户表记录
-                    _db.Entry(userModel).State = EntityState.Modified;
-                    _db.SaveChanges();
+                    _userRepository.Edit(userModel);
                     //userModel = _userbll.Update(userModel);
                     //记录日志
                     //logcache.AddServiceLogForUpdate(userModel, oldUserModel, CurrentMenuID, "更新用户", "Power_User");
@@ -202,16 +205,17 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
         //    return false;
         //}
 
-        ///// <summary>
-        ///// 获取对象
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //public String GetEntity(string id)
-        //{
-        //    Power_UserView _modelView = _userbll.GetViewModel(id);
-        //    return JsonConvert.SerializeObject(_modelView);
-        //}
+        /// <summary>
+        /// 获取对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public String GetEntity(string id)
+        {
+            Power_User _modelView = _userRepository.GetById(Guid.Parse(id));
+            //Power_UserView _modelView = _userbll.GetViewModel(id);
+            return JsonConvert.SerializeObject(_modelView);
+        }
 
 
         //#endregion
@@ -358,22 +362,25 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
 
 
         //#region 人员列表
-        ///// <summary>
-        ///// 查询所有人员列表
-        ///// </summary>
-        ///// <param name="ParameterJson"></param>
-        ///// <param name="jqgridparam"></param>
-        ///// <returns></returns>
-        //public string GetUserPagerJson(string ParameterJson, JqGridParam jqgridparam)
-        //{
-        //    if (string.IsNullOrEmpty(jqgridparam.sortField))
-        //        jqgridparam.sortField = "U_SortNo";
+        /// <summary>
+        /// 查询所有人员列表
+        /// </summary>
+        /// <param name="ParameterJson"></param>
+        /// <param name="jqgridparam"></param>
+        /// <returns></returns>
+        public string GetUserPagerJson(string ParameterJson, JqGridParam jqgridparam)
+        {
+            //if (string.IsNullOrEmpty(jqgridparam.sortField))
+            //    jqgridparam.sortField = "U_SortNo";
 
-        //    string sCondition = JqConditionParam.CombinationCon(ParameterJson, JqConditionParam.ToJson());
+            //string sCondition = JqConditionParam.CombinationCon(ParameterJson, JqConditionParam.ToJson());
 
-        //    string strJson = _userbll.GetUserInfoListJson(sCondition, ref jqgridparam);
-        //    return JsonManager.ToPageJson(jqgridparam, strJson);
-        //}
+            int records = 0;
+            string areacode = ManageProvider.AreaCode;
+            IEnumerable<Power_User> list = _userRepository.GetPageList(x => x.U_AreaCode == areacode, jqgridparam.pageSize, jqgridparam.pageIndex, out records);
+            jqgridparam.records = records;
+            return JsonManager.ToPageJson(jqgridparam, JsonConvert.SerializeObject(list));
+        }
         //#endregion
 
         //#region 验证输入的值是否唯一
@@ -395,6 +402,7 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
             //string sCondition = JsonConvert.SerializeObject(list);
             #endregion
 
+          
             int num = _db.Power_User.Where(x => x.UID == UID).Count();
             return num == 0;
         }
