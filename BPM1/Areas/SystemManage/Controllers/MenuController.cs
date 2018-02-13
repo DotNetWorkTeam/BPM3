@@ -15,12 +15,14 @@ namespace BPM1.Areas.SystemManage.Controllers
     [Area("SystemManage")]
     public class MenuController : Controller
     {
-        PowerMenuRepository _menuRepository;
         DataContext _db;
-        public MenuController(DataContext db, PowerMenuRepository menuRepository)
+        PowerMenuRepository _menuRepository;
+        PowerRoleMenuRepository _roleMenuRepository;
+        public MenuController(DataContext db, PowerMenuRepository menuRepository, PowerRoleMenuRepository roleMenuRepository)
         {
             _db = db;
             _menuRepository = menuRepository;
+            _roleMenuRepository = roleMenuRepository;
         }
 
         /// <summary>
@@ -75,50 +77,50 @@ namespace BPM1.Areas.SystemManage.Controllers
 
         ////TODO：潘超 获取菜单Json的方法，需要整理  GetPowerMenuJson，GetMenuJons，GetMenusJson，GetLeftMenuJsons，GetMiniTreeMenuJson
 
-        ///// <summary>
-        ///// 根据RoleId获取权限
-        ///// </summary>
-        ///// <param name="roleId"></param>
-        ///// <returns></returns>
-        //public string GetPowerMenuJson(string roleId)
-        //{
-        //    List<MiniTreeNode2> tree = new List<MiniTreeNode2>();
+        /// <summary>
+        /// 根据RoleId获取权限
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public string GetPowerMenuJson(string roleId)
+        {
+            List<MiniTreeNode2> tree = new List<MiniTreeNode2>();
+            IEnumerable<Power_RoleMenu> roleMenuList = _roleMenuRepository.List(x =>  x.RoleID == Guid.Parse(roleId));
 
-        //    List<ParameterJson> list1 = new List<ParameterJson>();
-        //    list1.Add(new ParameterJson("U_IsValid", ConditionOperate.Equal.ToString(), "1"));
-        //    list1.Add(new ParameterJson("RoleId", ConditionOperate.Equal.ToString(), roleId));
-        //    string json = _rolemenubll.GetListJson(JsonConvert.SerializeObject(list1));
-        //    if (!string.IsNullOrEmpty(json))
-        //    {
-        //        List<Power_RoleMenuView> roleMenuList = JsonConvert.DeserializeObject<List<Power_RoleMenuView>>(json);
+            //if (roleMenuList.Count() > 0)
+            //{
+            //    string strSort = new JqSortParam().ToJson();
+            //    IEnumerable<Power_Menu> roleMenuList1 = _menuRepository.List(x => x.U_IsValid == true && x.IsEnable == true);
+            //    if (roleMenuList1.Count() > 0)
+            //    {
+            //        foreach (var item in roleMenuList1)
+            //        {
+            //            MiniTreeNode2 node = new MiniTreeNode2();
+            //            node.id = item.ID.ToString();
+            //            node.pid = item.ParentID.ToString();
+            //            node.text = item.Name;
+            //            node.@checked = roleMenuList.Where(x => x.MenuID == item.ID).Count() > 0 ? true : false;
+            //            tree.Add(node);
+            //        }
+            //    }
+            //}
 
-        //        #region 条件组合
-        //        List<ParameterJson> list = new List<ParameterJson>();
-        //        list.Add(new ParameterJson("U_IsValid", ConditionOperate.Equal.ToString(), "1"));
-        //        list.Add(new ParameterJson("IsEnable", ConditionOperate.Equal.ToString(), "1"));
-        //        list.Add(new ParameterJson("IsSuperUser", ConditionOperate.Equal.ToString(), "0"));
-        //        string sCondition = JsonConvert.SerializeObject(list);
-        //        #endregion
 
-        //        string strSort = new JqSortParam().ToJson();
+            IEnumerable<Power_Menu> roleMenuList1 = _menuRepository.List(x => x.U_IsValid == true && x.IsEnable == true);
+            foreach (var item in roleMenuList1)
+            {
+                MiniTreeNode2 node = new MiniTreeNode2();
+                node.id = item.ID.ToString();
+                node.pid = item.ParentID.ToString();
+                node.text = item.Name;
+                node.@checked = roleMenuList.Where(x => x.MenuID == item.ID).Count() > 0 ? true : false;
+                tree.Add(node);
+            }
 
-        //        string sJson = _menubll.GetListJson(sCondition, strSort);
-        //        if (!string.IsNullOrEmpty(sJson))
-        //        {
-        //            List<Power_MenuView> roleMenuList1 = JsonConvert.DeserializeObject<List<Power_MenuView>>(sJson);
-        //            foreach (var item in roleMenuList1)
-        //            {
-        //                MiniTreeNode2 node = new MiniTreeNode2();
-        //                node.id = item.ID.ToString();
-        //                node.pid = item.ParentID.ToString();
-        //                node.text = item.Name;
-        //                node.@checked = roleMenuList.Where(x => x.MenuID == item.ID).Count() > 0 ? true : false;
-        //                tree.Add(node);
-        //            }
-        //        }
-        //    }
-        //    return JsonConvert.SerializeObject(tree);
-        //}
+
+
+            return JsonConvert.SerializeObject(tree);
+        }
 
         ///// <summary>
         ///// 加载数据
@@ -217,6 +219,8 @@ namespace BPM1.Areas.SystemManage.Controllers
                 model.IsEnable = true;
                 model.IsShow = true;
                 model.Style = "add";
+                model.U_AreaCode = ManageProvider.AreaCode;
+                model.U_IsValid = true;
 
                 try
                 {

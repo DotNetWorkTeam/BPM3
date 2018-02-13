@@ -79,7 +79,7 @@
             $.ajax({
                 url: "/PowerManage/UsersOrganization/AddOrUpdate",
                 type: 'post',
-                data: { model: data },
+                data: { data: data },
                 cache: false,
                 success: function (text) {
                     UserOrganizationObj.CloseWindow("save");

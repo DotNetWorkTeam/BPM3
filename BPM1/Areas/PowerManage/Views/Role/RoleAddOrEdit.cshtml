@@ -4,7 +4,6 @@
     //新增编辑角色
     Layout = "~/Views/Shared/_LayoutMiniUI.cshtml";
 }
-@using Hasng.CadreFile.WebApp
 
 <div id="form1" class="mini-fit form-include-remark">
     <input type="hidden" name="ID" class="mini-hidden" />
@@ -13,7 +12,7 @@
             <td class="editLeftWidth label-item">名称：</td>
             <td class="editRightWidth"><input name="Name" class="mini-textbox" required="true" style="width:90%;" /></td>
             <td class="editLeftWidth label-item">状态：</td>
-            <td class="editRightWidth">@HtmlEx.treeSelect("Status", "Status", "R01")</td>
+            <td class="editRightWidth"></td>
         </tr>
         <tr>
             <td class="editLeftWidth label-item">工作台：</td>
@@ -72,7 +71,7 @@
             $.ajax({
                 url: "/PowerManage/Role/AddOrUpdate",
                 type: 'post',
-                data: { data: o },
+                data: { model: o },
                 cache: false,
                 success: function (text) {                  
                  Roleobj.CloseWindow("save");

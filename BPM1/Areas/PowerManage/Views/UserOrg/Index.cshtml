@@ -218,8 +218,9 @@
             var Parameter = [];
             //所属机构
             var selectedNodes = UserOrganizationObj.tree.getSelected();
+            var vOrg = "";
             if (!!selectedNodes) {
-                var vOrg = UserOrganizationObj.tree.getSelected().ID;    //如果不进行判断，在未选中左侧节点的情况下直接取值会报错
+                vOrg = UserOrganizationObj.tree.getSelected().ID;    //如果不进行判断，在未选中左侧节点的情况下直接取值会报错
                 if (!!vOrg) {
                     Parameter.push({
                         paramName: 'UserOrg',
@@ -248,7 +249,7 @@
                     Logic: "AND"
                 });
             }
-            UserObj.grid.load({ ParameterJson: JSON.stringify(Parameter) });
+            UserObj.grid.load({ "UserOrg": vOrg});
         },
         //新增人员
         btnAdd: function () {

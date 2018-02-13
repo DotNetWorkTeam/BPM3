@@ -11,8 +11,9 @@ using BPM.Models;
 using Microsoft.EntityFrameworkCore;
 using BPM.Repository.PowerManage;
 using BPM1;
+using System.Data.SqlClient;
 
-namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
+namespace BPM1.Areas.PowerManage.Controllers
 {
     [Area("PowerManage")]
     public class UsersController : Controller
@@ -222,34 +223,49 @@ namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
 
         //#region 根据组织机构ID、角色ID 获取用户集合（用户ID集合） 通用
 
-        //public string GetPagerJsonRole(string ParameterJson, JqGridParam jqgridparam)
-        //{
-        //    if (string.IsNullOrEmpty(jqgridparam.sortField))
-        //        jqgridparam.sortField = "U_SortNo";
+        public string GetPagerJsonRole(string ParameterJson, JqGridParam jqgridparam)
+        {
+            //if (string.IsNullOrEmpty(jqgridparam.sortField))
+            //    jqgridparam.sortField = "U_SortNo";
 
-        //    string strJson = _userbll.GetListJsonByRole(ParameterJson, ref jqgridparam);
-        //    logcache.AddServiceLogForQuery(CurrentMenuID, "用户角色查询", "", ParameterJson);
-        //    return JsonManager.ToPageJson(jqgridparam, strJson);
-        //}
+            //string strJson = _userbll.GetListJsonByRole(ParameterJson, ref jqgridparam);
+            //logcache.AddServiceLogForQuery(CurrentMenuID, "用户角色查询", "", ParameterJson);
 
-        ///// <summary>
-        ///// 查询人员列表 并且 排除指定机构的人员
-        ///// </summary>
-        ///// <param name="ParameterJson"></param>
-        ///// <param name="orgID"></param>
-        ///// <param name="jqgridparam"></param>
-        ///// <returns></returns>
-        //public string GetPagerJsonOutOrg(string ParameterJson, string orgID, JqGridParam jqgridparam)
-        //{
-        //    if (string.IsNullOrEmpty(jqgridparam.sortField))
-        //        jqgridparam.sortField = "U_SortNo";
+            int records = 0;
+            IEnumerable<Power_User> list = _userRepository.GetPageList(x => x.U_AreaCode == ManageProvider.AreaCode, jqgridparam.pageSize, jqgridparam.pageIndex, out records);
+            jqgridparam.records = records;
+            return JsonManager.ToPageJson(jqgridparam, JsonConvert.SerializeObject(list));
+        }
 
-        //    string sCondition = JqConditionParam.CombinationCon(ParameterJson, JqConditionParam.ToJson());
+        /// <summary>
+        /// 查询人员列表 并且 排除指定机构的人员
+        /// </summary>
+        /// <param name="ParameterJson"></param>
+        /// <param name="orgID"></param>
+        /// <param name="jqgridparam"></param>
+        /// <returns></returns>
+        public string GetPagerJsonOutOrg(string ParameterJson, string orgID, JqGridParam jqgridparam)
+        {
+            //if (string.IsNullOrEmpty(jqgridparam.sortField))
+            //    jqgridparam.sortField = "U_SortNo";
+
+            //string sCondition = JqConditionParam.CombinationCon(ParameterJson, JqConditionParam.ToJson());
 
 
-        //    string strJson = _userbll.GetPagerJsonOutOrg(sCondition, orgID, ref jqgridparam);
-        //    return JsonManager.ToPageJson(jqgridparam, strJson);
-        //}
+            //string strJson = _userbll.GetPagerJsonOutOrg(sCondition, orgID, ref jqgridparam);
+
+
+
+            var q = _db.Set<Power_User>().FromSql($"select * from Power_User where id not in (select UserID from Power_UserOrg where OrgID=@id)", new[]
+             {
+                 new SqlParameter("id", orgID),
+             });
+            jqgridparam.records = q.Count();
+            var list = q.Skip(jqgridparam.pageSize * jqgridparam.pageIndex )
+                            .Take(jqgridparam.pageSize).ToList<Power_User>();
+
+            return JsonManager.ToPageJson(jqgridparam, JsonConvert.SerializeObject(list));
+        }
 
 
         ///// <summary>

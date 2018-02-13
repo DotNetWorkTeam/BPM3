@@ -10,7 +10,7 @@ using BPM1;
 using BPM.Repository.PowerManage;
 using BPM.Models;
 
-namespace Hasng.CadreFile.WebApp.Areas.PowerManage.Controllers
+namespace BPM1.Areas.PowerManage.Controllers
 {
     [Area("PowerManage")]
     public class StationController : Controller

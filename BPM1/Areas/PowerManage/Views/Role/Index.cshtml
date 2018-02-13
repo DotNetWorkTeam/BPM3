@@ -5,9 +5,7 @@
     Layout = "~/Views/Shared/_LayoutMiniUI.cshtml";
 }
 
-<script type="text/javascript">
-    @Html.Raw(ViewData["CommonDic"])
-</script>
+
 <style>
     .mini-grid-headerCell:last-child, .mini-grid-cell:last-child {
         border-right: none;
@@ -92,7 +90,7 @@
         btnAdd: function () {
             var maxIndex = 1;
             hasng.WinOpen({
-                url: "/PowerManage/Role/RoleAddOrEdit?menuId=" + GetQuery("menuId"),
+                url: "/PowerManage/Role/RoleAddOrEdit",
                 title: "新增", width: 670, height: 340,
                 onload: function (iframe) {
 
@@ -118,7 +116,7 @@
                             mini.alert("系统内置账户，不允许编辑！");
                         } else {
                             hasng.WinOpen({
-                                url: "/PowerManage/Role/RoleAddOrEdit?menuId=" + GetQuery("menuId"),
+                                url: "/PowerManage/Role/RoleAddOrEdit",
                                 title: "编辑", width: 670, height: 340,
                                 onload: function (iframe) {
 

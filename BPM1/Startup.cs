@@ -46,6 +46,10 @@ namespace BPM1
             services.AddScoped(typeof(PowerMenuRepository));
             services.AddScoped(typeof(AreaReponsitory));
             services.AddScoped(typeof(PowerStationRepository));
+            services.AddScoped(typeof(PowerRoleRepository));
+            services.AddScoped(typeof(PowerRoleMenuRepository));
+            services.AddScoped(typeof(PowerUserOrganizationRepository));
+            services.AddScoped(typeof(PowerUserOrgRepository));
 
 
             services.AddSession();
